@@ -1,24 +1,21 @@
+var connect = require('connect');
 var http = require('http');
-var fs = require('fs');
 
-function error404response(response){
-    response.writeHead(404, {"Content-Type": "text/plain"});
-    response.write("404 error: page not found!");
-    response.end();
+
+var app = connect();
+
+function doFirst(request, response, next) {
+    console.log("this is first function");
+    next();
 }
 
-function requestListener(request, res) {
-    if(request.method == 'GET' && request.url == '/'){
-        res.writeHead(200, {"Content-Type": "text/html"});
-        fs.createReadStream('./index.html').pipe(res);
-
-    } else {
-        error404response(res);
-    }
-
+function doSecond(request, response, next) {
+    console.log("this is second function");
+    next();
 }
 
 
+app.use(doFirst);
+app.use(doSecond);
 
-http.createServer(requestListener).listen(8888);
-console.log("Server started");
+http.createServer(app).listen(8888);
